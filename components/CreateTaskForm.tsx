@@ -1,5 +1,6 @@
 import React from 'react'
 import { useForm, FormProvider, Resolver } from 'react-hook-form'
+import { useCreateTaskMutation } from '../generated/graphql';
 import InputField from './InputField';
 
 interface CreateTaskFormProps {
@@ -11,6 +12,10 @@ type FormValues = {
 
 interface IFormInputs {
     title: string
+}
+
+interface Props {
+    onTaskCreated: () => void;
 }
 
 const resolver: Resolver<FormValues> = async (values) => {
@@ -28,20 +33,38 @@ const resolver: Resolver<FormValues> = async (values) => {
 };
 
 
-const CreateTaskForm: React.FC<CreateTaskFormProps> = () => {
-
+const CreateTaskForm: React.FC<Props> = ({ onTaskCreated }) => {
     const [title, setTitle] = React.useState('')
+    const [createTask, { loading, error }] = useCreateTaskMutation({
+        onCompleted: () => {
+            onTaskCreated();
+            setTitle('')
+        }
+    })
     const methods = useForm<FormValues>({ resolver });
 
     const onSubmit = (data: IFormInputs) => {
-        alert(JSON.stringify(data.title))
+        if (!loading && data.title) {
+            createTask({
+                variables: {
+                    input: {
+                        title: data.title
+                    }
+                }
+            })
+        }
     };
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setTitle(e.target.value)
+    }
 
 
     return (
         <>
             <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
+                    {error && <p className="alert-error">An error occured.</p>}
                     <InputField
                         className="text-input new-task-text-input"
                         autoComplete="off"
@@ -49,6 +72,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = () => {
                         placeholder="What would you like to get done?"
                         label='Title'
                         defaultValue=""
+                        onChange={handleChange}
                     />
                     {methods.errors?.title && <p style={{ color: "tomato" }}>{methods.errors.title.message}</p>}
                 </form>

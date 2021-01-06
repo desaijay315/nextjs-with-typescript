@@ -1,20 +1,6 @@
 import React, { InputHTMLAttributes, useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form';
 
-const ParseFormatTextarea = ({ value = [], onChange }) => {
-    const [text, setText] = React.useState(value);
-
-    const handleChange = (e: any) => {
-        const value = e.target.value.split('\n');
-
-        setText(e.target.value);
-        onChange(value);
-    };
-
-    return <textarea onChange={handleChange} value={text} />;
-};
-
-
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
     label: string;
     name: string;
@@ -35,7 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({
 
     let C = <input placeholder={name} />
     if (textarea) {
-        C = ParseFormatTextarea
+        C = <textarea placeholder={name} />
     }
 
     return (
