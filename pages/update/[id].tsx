@@ -17,7 +17,7 @@ const EditTask: NextPage = () => {
         }
     })
 
-    const [updateTask] = useUpdateTaskMutation();
+
 
     if (loading) {
         return (
@@ -40,7 +40,7 @@ const EditTask: NextPage = () => {
     }
 
     return (
-        <>{data ? <UpdateTaskForm initialValues={{ title: data.task.title }} /> : <p>Task not found</p>}</>
+        <>{data ? <UpdateTaskForm initialValues={{ id: data.task.id, title: data.task.title }} /> : <p>Task not found</p>}</>
     )
 }
 

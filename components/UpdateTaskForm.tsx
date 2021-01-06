@@ -1,13 +1,15 @@
 import React from 'react'
 import { useForm, FormProvider, Resolver } from 'react-hook-form'
 import InputField from './InputField';
-
+import { useUpdateTaskMutation } from '../generated/graphql';
+import { useRouter } from 'next/router';
 
 interface UpdateTaskFormProps {
 }
 
 type FormValues = {
     title: string
+    id: number
 }
 
 interface IFormInputs {
@@ -34,19 +36,22 @@ interface Props {
 
 
 const UpdateTaskForm: React.FC<Props> = ({ initialValues }) => {
+    const router = useRouter();
     const [values, setValues] = React.useState<IFormInputs>(initialValues)
     const methods = useForm<FormValues>({ resolver });
 
-    const onSubmit = (data: IFormInputs) => {
+    const [updateTask, { loading, error }] = useUpdateTaskMutation();
 
-        console.log(data)
-        // createTask({
-        //     variables: {
-        //         input: {
-        //             title: data.title
-        //         }
-        //     }
-        // })
+    const onSubmit = (data: IFormInputs) => {
+        updateTask({
+            variables: {
+                input: {
+                    id: initialValues.id,
+                    title: data.title
+                }
+            }
+        })
+        router.back();
     };
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -60,20 +65,20 @@ const UpdateTaskForm: React.FC<Props> = ({ initialValues }) => {
         <>
             <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
-                    {/* {error && <p className="alert-error">An error occured.</p>} */}
+                    {error && <p className="alert-error">An error occured.</p>}
+
+                    <InputField
+                        className="text-input"
+                        autoComplete="off"
+                        name='title'
+                        label='Title'
+                        defaultValue={values.title}
+                        onChange={handleChange}
+                    />
+                    {methods.errors?.title && <p style={{ color: "tomato" }}>{methods.errors.title.message}</p>}
+
                     <p>
-                        <InputField
-                            className="text-input"
-                            autoComplete="off"
-                            name='title'
-                            label='Title'
-                            defaultValue={values.title}
-                            onChange={handleChange}
-                        />
-                        {methods.errors?.title && <p style={{ color: "tomato" }}>{methods.errors.title.message}</p>}
-                    </p>
-                    <p>
-                        <button type="submit" className="button">Save</button>
+                        <button disabled={loading} type="submit" className="button">{loading ? 'Loading...' : 'Save'}</button>
                     </p>
                 </form>
             </FormProvider>
