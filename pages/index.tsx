@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { NextPage } from "next";
+import { withApollo } from '../lib/apollo';
 
 interface IntialProps {
     greeting: string
@@ -46,4 +47,4 @@ Home.getInitialProps = async () => ({
     greeting: 'Hello World'
 })
 
-export default Home;
+export default withApollo({ ssr: false })(Home);
