@@ -1,6 +1,8 @@
 import { NextPage } from "next";
 import { withApollo } from '../lib/apollo';
 import { TaskStatus, useTasksQuery } from "../generated/graphql";
+import TaskList from "../components/TaskList";
+import CreateTaskForm from "../components/CreateTaskForm";
 
 interface IntialProps { }
 
@@ -24,11 +26,12 @@ const Home: NextPage<Props, IntialProps> = () => {
         </div>;
     }
     const tasks = data?.tasks;
-    return tasks ? <ul>{tasks.map(task => {
-        return <li key={task.id}>
-            {task.title}
-        </li>
-    })}</ul> : <p>There are no tasks here.</p>
+    return (
+        <>
+            <CreateTaskForm />
+            {tasks ? <TaskList tasks={tasks} /> : <p>There are no tasks here.</p>}
+        </>
+    )
 }
 
 Home.getInitialProps = async () => ({
