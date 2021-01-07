@@ -1,7 +1,8 @@
 import Layout from '../components/Layout';
 import '../styles/index.css';
+import { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }: any) {
+function MyApp({ Component, pageProps }: AppProps) {
   return <Layout>
     <Component {...pageProps} />
   </Layout>;
