@@ -55,7 +55,8 @@ const CreateTaskForm: React.FC<Props> = ({ onTaskCreated }) => {
         }
     };
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e)
         setTitle(e.target.value)
     }
 

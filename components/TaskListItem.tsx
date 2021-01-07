@@ -1,25 +1,27 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Task, TasksDocument, TasksQuery, TasksQueryVariables, TaskStatus, useChangeStatusMutation } from '../generated/graphql';
 import Link from 'next/link'
 import { useDeleteTaskMutation } from '../generated/graphql';
 
+import { TaskFilterContext } from '../pages/[status]'
 interface TaskListItemProps {
     task: Task;
+
 }
 
 const TaskListItem: React.FC<TaskListItemProps> = ({ task }) => {
-
+    const { status } = useContext(TaskFilterContext)
     const [deleteTask, { loading, error }] = useDeleteTaskMutation({
         update: (cache, result) => {
             const data = cache.readQuery<TasksQuery, TasksQueryVariables>({
                 query: TasksDocument,
-                variables: { status: TaskStatus.Active }
+                variables: { status: status }
             });
 
             if (data) {
                 cache.writeQuery<TasksQuery, TasksQueryVariables>({
                     query: TasksDocument,
-                    variables: { status: TaskStatus.Active }
+                    variables: { status: status }
                     ,
                     data: {
                         tasks: data.tasks.filter(
