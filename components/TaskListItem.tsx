@@ -70,7 +70,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({ task }) => {
             </Link>
             <button
                 disabled={loading}
-                onClick={(e) => handleDeleteClick(e)}
+                onClick={handleDeleteClick}
                 className="task-list-item-delete"
             >
                 &times;
